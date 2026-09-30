@@ -10,7 +10,7 @@
     <packaging>jar</packaging>
 
     <name>UptifyBridge</name>
-    <description>Official Uptify Minecraft Server Integration Plugin: In-Game Feedback, Status &amp; Account Linking</description>
+    <description>Official Uptify Minecraft Server Integration: In-Game Feedback, Live Status &amp; 0-Click Account Linking</description>
     <url>https://uptify.site</url>
 
     <properties>
@@ -26,6 +26,11 @@
         <repository>
             <id>papermc-repo</id>
             <url>https://repo.papermc.io/repository/maven-public/</url>
+        </repository>
+        <!-- ExtendedClip Repository (PlaceholderAPI) -->
+        <repository>
+            <id>placeholderapi</id>
+            <url>https://repo.extendedclip.com/releases/</url>
         </repository>
         <!-- Sonatype Repository -->
         <repository>
@@ -48,6 +53,14 @@
             <groupId>com.google.code.gson</groupId>
             <artifactId>gson</artifactId>
             <version>2.10.1</version>
+            <scope>provided</scope>
+        </dependency>
+
+        <!-- PlaceholderAPI (Optional Soft Dependency) -->
+        <dependency>
+            <groupId>me.clip</groupId>
+            <artifactId>placeholderapi</artifactId>
+            <version>2.11.5</version>
             <scope>provided</scope>
         </dependency>
     </dependencies>

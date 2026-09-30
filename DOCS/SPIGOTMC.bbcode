@@ -1,0 +1,112 @@
+[CENTER]
+[SIZE=6][COLOR=#00FF88][B]⚡ UptifyBridge[/B][/COLOR][/SIZE]
+[SIZE=4][B]Official Minecraft Integration for [URL='https://uptify.site']Uptify.site[/URL][/B][/SIZE]
+[COLOR=#888888]Status Pages • In-Game Suggestions • Zero-Click Account Linking • Discord Webhooks[/COLOR]
+
+[IMG]https://uptify.site/icon.jpg[/IMG]
+
+[B]Supports: Paper • Purpur • Spigot • Folia (1.16 - 1.21.x+)[/B]
+[B]Java 17 & 21+ Compatible | Zero NMS[/B]
+[/CENTER]
+
+[HR][/HR]
+
+[SIZE=5][COLOR=#00FF88][B]🌟 Features Overview[/B][/COLOR][/SIZE]
+
+[B][COLOR=#55FF55]🔗 Zero-Click Account Linking (/link)[/COLOR][/B]
+[LIST]
+[*]Generates a secure 15-minute one-time link token with a clickable chat button.
+[*][B]0-Click Instant Link:[/B] Players already logged into Uptify are linked automatically with zero extra clicks!
+[*]Unregistered players see their Minecraft skin head, can log in or create an account, and are auto-linked upon authentication.
+[*]In-game background poller immediately sends an emerald notification when verification succeeds.
+[/LIST]
+
+[B][COLOR=#55FF55]💡 In-Game Feedback & Suggestions (/suggest <idea>)[/COLOR][/B]
+[LIST]
+[*]Players can submit server suggestions and feedback directly in-game.
+[*]Syncs live to your server's [URL='https://uptify.site/feedback']Uptify Feedback Board[/URL].
+[*]Broadcasts directly to your staff Discord channel with Discord Webhook cards.
+[*][B]Anti-Spam Verification:[/B] Requires players to link their account first.
+[/LIST]
+
+[B][COLOR=#55FF55]📊 Live Network Status (/status)[/COLOR][/B]
+[LIST]
+[*]Displays real-time node latencies (Proxy, Survival, Bedrock Gateway, etc.).
+[*]Shows active maintenance incidents and severity warnings.
+[*]Clickable link directly to your public status page on Uptify.
+[/LIST]
+
+[B][COLOR=#55FF55]🧩 PlaceholderAPI Support[/COLOR][/B]
+Display live status on your TAB, Scoreboard, or Chat formatting:
+[LIST]
+[*][B]%uptify_status%[/B] - OPERATIONAL, DEGRADED, or OUTAGE
+[*][B]%uptify_status_colored%[/B] - Colored status (Operational, Degraded, Outage)
+[*][B]%uptify_status_project%[/B] - Configured status project ID
+[*][B]%uptify_feedback_project%[/B] - Configured feedback project ID
+[*][B]%uptify_version%[/B] - Plugin version
+[/LIST]
+
+[HR][/HR]
+
+[SIZE=5][COLOR=#00FF88][B]⚙️ Configuration (config.yml)[/B][/COLOR][/SIZE]
+[CODE=yaml]
+# Uptify API endpoint
+api-base-url: "https://uptify.site/api"
+
+# Status Project ID (for /status)
+status-project-id: "YOUR_STATUS_PROJECT_ID"
+
+# Feedback Project ID (for /suggest)
+feedback-project-id: "YOUR_FEEDBACK_PROJECT_ID"
+
+enable-link-polling: true
+polling-interval-seconds: 3
+cache-status-interval-seconds: 60
+[/CODE]
+
+[HR][/HR]
+
+[SIZE=5][COLOR=#00FF88][B]🎮 Commands & Permissions[/B][/COLOR][/SIZE]
+[TABLE]
+[TR]
+[TH]Command[/TH]
+[TH]Aliases[/TH]
+[TH]Description[/TH]
+[TH]Permission[/TH]
+[/TR]
+[TR]
+[TD]/link[/TD]
+[TD]/uptifylink[/TD]
+[TD]Generates a clickable link to verify your Uptify account[/TD]
+[TD]uptify.use (Default)[/TD]
+[/TR]
+[TR]
+[TD]/suggest <idea>[/TD]
+[TD]/feedback, /idea[/TD]
+[TD]Submits feedback to your server's Uptify board[/TD]
+[TD]uptify.use (Default)[/TD]
+[/TR]
+[TR]
+[TD]/status[/TD]
+[TD]/uptifystatus[/TD]
+[TD]Displays live node latency and incident alerts[/TD]
+[TD]uptify.use (Default)[/TD]
+[/TR]
+[TR]
+[TD]/uptify test[/TD]
+[TD]—[/TD]
+[TD]Tests API connection and measures latency ping[/TD]
+[TD]uptify.admin (OP)[/TD]
+[/TR]
+[TR]
+[TD]/uptify reload[/TD]
+[TD]—[/TD]
+[TD]Reloads config.yml[/TD]
+[TD]uptify.admin (OP)[/TD]
+[/TR]
+[/TABLE]
+
+[HR][/HR]
+[CENTER]
+[B]Official Website:[/B] [URL='https://uptify.site']https://uptify.site[/URL] • [B]GitHub:[/B] [URL='https://github.com/ShaikhZaid404/UptifyBridge']ShaikhZaid404/UptifyBridge[/URL]
+[/CENTER]

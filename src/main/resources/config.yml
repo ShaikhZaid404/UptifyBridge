@@ -37,8 +37,14 @@ polling-interval-seconds: 3
 polling-timeout-seconds: 180
 
 # ------------------------------------------------------------------------------
+# CACHE & PLACEHOLDERS (PlaceholderAPI)
+# ------------------------------------------------------------------------------
+# Interval to refresh status cache in seconds (used by %uptify_status%)
+cache-status-interval-seconds: 60
+
+# ------------------------------------------------------------------------------
 # MESSAGES & LOCALIZATION
-# Supports standard Minecraft color codes (&a, &e, &c, &8, etc.)
+# Supports standard Minecraft color codes (&a, &e, &c, &8, etc.) and hex (&#RRGGBB)
 # ------------------------------------------------------------------------------
 messages:
   prefix: "&8[&aUptify&8]&r "

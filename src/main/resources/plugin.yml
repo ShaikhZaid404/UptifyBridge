@@ -6,6 +6,7 @@ author: ShaikhZaid404
 description: Official Uptify Integration Plugin for Minecraft (Link, Status, Feedback)
 website: https://uptify.site
 folia-supported: true
+softdepend: [PlaceholderAPI]
 
 commands:
   link:
@@ -26,12 +27,12 @@ commands:
   uptify:
     description: Uptify Bridge administration commands
     permission: uptify.admin
-    usage: /<command> reload
+    usage: /<command> [help|test|reload|version]
 
 permissions:
   uptify.use:
     description: Allows players to run /link, /suggest, and /status
     default: true
   uptify.admin:
-    description: Allows reloading and configuring UptifyBridge
+    description: Allows reloading, testing, and configuring UptifyBridge
     default: op

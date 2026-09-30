@@ -116,6 +116,27 @@ public class ApiClient {
                 .thenApply(res -> new ApiResponse(res.statusCode(), parseJson(res.body())));
     }
 
+    /**
+     * Test connection to the Uptify API and measure round-trip latency.
+     */
+    public CompletableFuture<HealthResponse> testConnection() {
+        long startTime = System.currentTimeMillis();
+        String endpoint = getBaseUrl() + "/health";
+
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(URI.create(endpoint))
+                .timeout(Duration.ofSeconds(6))
+                .header("User-Agent", "UptifyBridge/" + plugin.getDescription().getVersion())
+                .GET()
+                .build();
+
+        return httpClient.sendAsync(request, HttpResponse.BodyHandlers.ofString())
+                .thenApply(res -> {
+                    long latency = System.currentTimeMillis() - startTime;
+                    return new HealthResponse(res.statusCode() == 200, res.statusCode(), latency, parseJson(res.body()));
+                });
+    }
+
     private JsonObject parseJson(String responseBody) {
         try {
             if (responseBody == null || responseBody.trim().isEmpty()) {
@@ -148,6 +169,36 @@ public class ApiClient {
 
         public boolean isSuccess() {
             return statusCode >= 200 && statusCode < 300;
+        }
+    }
+
+    public static class HealthResponse {
+        private final boolean reachable;
+        private final int statusCode;
+        private final long latencyMs;
+        private final JsonObject data;
+
+        public HealthResponse(boolean reachable, int statusCode, long latencyMs, JsonObject data) {
+            this.reachable = reachable;
+            this.statusCode = statusCode;
+            this.latencyMs = latencyMs;
+            this.data = data;
+        }
+
+        public boolean isReachable() {
+            return reachable;
+        }
+
+        public int getStatusCode() {
+            return statusCode;
+        }
+
+        public long getLatencyMs() {
+            return latencyMs;
+        }
+
+        public JsonObject getData() {
+            return data;
         }
     }
 }
