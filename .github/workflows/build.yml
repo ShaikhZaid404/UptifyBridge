@@ -1,0 +1,47 @@
+name: Build UptifyBridge
+
+on:
+  push:
+    branches: [ main, master ]
+    tags: [ 'v*' ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & Package Plugin
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Source Code
+        uses: actions/checkout@v4
+
+      - name: Set up Java 21 JDK
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+          cache: 'maven'
+
+      - name: Build JAR with Maven
+        run: mvn clean package --batch-mode --no-transfer-progress
+
+      - name: Upload Compiled JAR Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: UptifyBridge-JAR
+          path: target/UptifyBridge-*.jar
+          retention-days: 30
+
+      - name: Create GitHub Release (On Version Tag)
+        if: startsWith(github.ref, 'refs/tags/v')
+        uses: softprops/action-gh-release@v2
+        with:
+          files: target/UptifyBridge-*.jar
+          generate_release_notes: true
+          draft: false
+          prerelease: false

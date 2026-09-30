@@ -1,0 +1,37 @@
+name: UptifyBridge
+version: '${project.version}'
+main: site.uptify.bridge.UptifyBridge
+api-version: '1.16'
+author: ShaikhZaid404
+description: Official Uptify Integration Plugin for Minecraft (Link, Status, Feedback)
+website: https://uptify.site
+folia-supported: true
+
+commands:
+  link:
+    description: Link your Minecraft player account with your Uptify profile
+    aliases: [uptifylink]
+    usage: /<command>
+    permission: uptify.use
+  suggest:
+    description: Submit server feedback or suggestions directly to Uptify
+    aliases: [feedback, idea]
+    usage: /<command> <your idea or suggestion>
+    permission: uptify.use
+  status:
+    description: View live server node latency, monitor health, and incidents
+    aliases: [uptifystatus, serverstatus]
+    usage: /<command>
+    permission: uptify.use
+  uptify:
+    description: Uptify Bridge administration commands
+    permission: uptify.admin
+    usage: /<command> reload
+
+permissions:
+  uptify.use:
+    description: Allows players to run /link, /suggest, and /status
+    default: true
+  uptify.admin:
+    description: Allows reloading and configuring UptifyBridge
+    default: op

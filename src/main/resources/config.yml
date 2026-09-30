@@ -1,0 +1,79 @@
+# ==============================================================================
+#                      UPTIFY BRIDGE - CONFIGURATION
+#              Official Minecraft Integration for Uptify.site
+# ==============================================================================
+
+# Uptify API endpoint (Do not change unless using a custom domain or proxy)
+api-base-url: "https://uptify.site/api"
+
+# Server identification name (Sent to Uptify when creating link sessions)
+server-name: "My Minecraft Network"
+
+# ------------------------------------------------------------------------------
+# PROJECT IDENTIFIERS
+# (Separate projects for Status monitoring and Player Feedback boards)
+# ------------------------------------------------------------------------------
+
+# Status Project ID: The UUID of your Status Page project on Uptify.
+# Used by players running /status to fetch live node latency & active incidents.
+status-project-id: "YOUR_STATUS_PROJECT_ID_HERE"
+
+# Feedback Project ID: The UUID of your Feedback Board project on Uptify.
+# Used by players running /suggest or /feedback to post public ideas.
+feedback-project-id: "YOUR_FEEDBACK_PROJECT_ID_HERE"
+
+# ------------------------------------------------------------------------------
+# LINKING SETTINGS
+# ------------------------------------------------------------------------------
+
+# Enable automatic polling: when a player runs /link, the plugin automatically
+# checks if they verified the link in their browser and notifies them instantly.
+enable-link-polling: true
+
+# Polling frequency in seconds (default: 3 seconds)
+polling-interval-seconds: 3
+
+# Max seconds to poll before stopping (default: 180 seconds / 3 minutes)
+polling-timeout-seconds: 180
+
+# ------------------------------------------------------------------------------
+# MESSAGES & LOCALIZATION
+# Supports standard Minecraft color codes (&a, &e, &c, &8, etc.)
+# ------------------------------------------------------------------------------
+messages:
+  prefix: "&8[&aUptify&8]&r "
+  
+  # /link Messages
+  link-generating: "&7Generating your secure account link session..."
+  link-header: "&8------------------ [&a Uptify Link &8] ------------------"
+  link-instructions: "&eClick the button below to link your Minecraft profile to Uptify:"
+  link-button: "&a&l[CLICK HERE TO LINK ACCOUNT]"
+  link-hover: "&7Opens &nhttps://uptify.site/mc/link&7 in your browser\n&8(Token expires in 15 minutes)"
+  link-footer: "&8----------------------------------------------------"
+  link-success: "&a✔ Successfully linked to Uptify account &e@{username}&a!"
+  link-timeout: "&cLink session timed out. Type &e/link&c to generate a new one."
+  link-error: "&cFailed to initiate link session. Please contact an administrator."
+
+  # /suggest & /feedback Messages
+  feedback-not-linked: "&cYou must link your Uptify account before submitting suggestions!\n&7Type &a/link &7to link your account."
+  feedback-empty: "&cUsage: /suggest <your idea or suggestion>"
+  feedback-submitting: "&7Submitting your suggestion to Uptify..."
+  feedback-success: "&a✔ Your suggestion has been posted to our Uptify board! &8(ID: #{id})"
+  feedback-view-button: "&b&l[VIEW ON WEB]"
+  feedback-view-hover: "&7Click to open your suggestion in your browser"
+  feedback-error: "&cFailed to submit suggestion. &7{reason}"
+
+  # /status Messages
+  status-loading: "&7Fetching live server status from Uptify..."
+  status-not-configured: "&cStatus monitoring is not configured. Please set 'status-project-id' in config.yml."
+  status-header: "&8============= [&a Live Network Status &8] ============="
+  status-overall-operational: "&a● All Systems Operational"
+  status-overall-degraded: "&e● Minor Service Degradation"
+  status-overall-outage: "&c● Major System Outage"
+  status-monitor-entry: "&8• &f{name}: {status_color}● {status_text} &8(&7{latency}ms&8)"
+  status-incident-alert: "&e⚠ Active Incident: &f{title} &8(&e{severity}&8)"
+  status-footer: "&8===================================================="
+
+  # Admin Messages
+  no-permission: "&cYou do not have permission to execute this command."
+  config-reloaded: "&aUptifyBridge configuration reloaded successfully!"
