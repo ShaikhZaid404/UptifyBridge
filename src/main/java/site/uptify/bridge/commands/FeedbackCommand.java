@@ -78,7 +78,9 @@ public class FeedbackCommand implements CommandExecutor, TabCompleter {
 
                     // Success
                     String idStr = "N/A";
-                    if (data.has("feedback") && data.getAsJsonObject("feedback").has("id")) {
+                    if (data.has("feedbackId")) {
+                        idStr = data.get("feedbackId").getAsString();
+                    } else if (data.has("feedback") && data.getAsJsonObject("feedback").has("id")) {
                         idStr = String.valueOf(data.getAsJsonObject("feedback").get("id").getAsInt());
                     }
 
@@ -89,7 +91,7 @@ public class FeedbackCommand implements CommandExecutor, TabCompleter {
                     // Optional button to view on web
                     String viewBtnText = plugin.getConfig().getString("messages.feedback-view-button", "&b&l[VIEW ON WEB]");
                     String viewHover = plugin.getConfig().getString("messages.feedback-view-hover", "&7Click to open your suggestion in your browser");
-                    String webUrl = "https://uptify.site/feedback";
+                    String webUrl = data.has("feedbackUrl") ? data.get("feedbackUrl").getAsString() : "https://uptify.site/feedback";
 
                     TextComponent viewBtn = ChatUtils.createClickableUrl("  " + viewBtnText, webUrl, viewHover);
                     player.spigot().sendMessage(viewBtn);

@@ -68,7 +68,7 @@ public class StatusCommand implements CommandExecutor, TabCompleter {
                     if (data.has("monitors") && data.get("monitors").isJsonArray()) {
                         JsonArray monitors = data.getAsJsonArray("monitors");
                         if (monitors.size() > 0) {
-                            ChatUtils.sendMessage(sender, "&7Nodes &amp; Services:");
+                            ChatUtils.sendMessage(sender, "&7Monitors &amp; Services:".replace("&amp;", "&"));
                             for (JsonElement el : monitors) {
                                 if (!el.isJsonObject()) continue;
                                 JsonObject m = el.getAsJsonObject();
