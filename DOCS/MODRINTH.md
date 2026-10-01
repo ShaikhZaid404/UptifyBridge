@@ -1,84 +1,64 @@
-# ⚡ UptifyBridge
+# UptifyBridge
 
-> **The Official Minecraft Integration for [Uptify.site](https://uptify.site)** — Connect your server network with live status pages, in-game suggestion boards, and zero-click account linking!
+UptifyBridge is the official Paper / Spigot / Folia integration plugin for [Uptify](https://uptify.site). It connects your Minecraft server to your Uptify status page and feedback board.
 
-![Uptify Banner](https://uptify.site/icon.jpg)
+## Features
 
-[![Supports Paper](https://img.shields.io/badge/Paper-1.16%20--%201.21.x-brightgreen.svg)](https://papermc.io)
-[![Folia Ready](https://img.shields.io/badge/Folia-Supported-blueviolet.svg)](https://papermc.io/software/folia)
-[![Java](https://img.shields.io/badge/Java-17%20%7C%2021+-orange.svg)](https://adoptium.net)
-[![License](https://img.shields.io/badge/License-MIT-blue.svg)](https://opensource.org/licenses/MIT)
-
----
-
-## 🌟 Key Features
-
-### 🔗 1. Zero-Click Account Linking (`/link`)
-- Generates a secure, 15-minute one-time link token.
-- Clickable URL in chat leading directly to `https://uptify.site/mc/link?token=...`.
-- **0-Click Instant Link**: If the player is already logged into Uptify, the account links automatically in the background with zero buttons to click!
-- If unauthenticated, displays the player's Minecraft avatar head and prompts login or registration, then seamlessly links.
-- In-game background poller immediately celebrates verification in chat!
-
-### 💡 2. In-Game Feedback & Suggestions (`/suggest <idea>`)
-- Let your community post ideas and suggestions straight from the Minecraft chat!
-- Saves to your server's **Uptify Feedback Board**.
-- Automatically broadcasts to your staff Discord channel via rich Discord Webhook cards.
-- **Anti-Spam Verification**: Only verified, linked players can submit suggestions.
-
-### 📊 3. Live Server Network Status (`/status`)
-- Interactive in-game status card showing:
-  - Overall status: `● All Systems Operational` / `● Degraded` / `● Outage`
-  - Node latency: Proxy, Survival, Bedrock Gateway, etc. (in ms)
-  - Active incidents and maintenance notices.
-  - Clickable web link to your public status page on Uptify.
-
-### 🧩 4. PlaceholderAPI Integration (Optional)
-Hook status and project stats directly into your Scoreboard, TAB, or Chat:
-- `%uptify_status%` - Returns `OPERATIONAL`, `DEGRADED`, or `OUTAGE`.
-- `%uptify_status_colored%` - Returns `§aOperational`, `§eDegraded`, or `§cOutage`.
-- `%uptify_status_project%` - Returns your configured status project ID.
-- `%uptify_feedback_project%` - Returns your configured feedback project ID.
-- `%uptify_version%` - Returns plugin version.
-
-### 🛡️ 5. Zero NMS & Folia Native
-- Built exclusively with Bukkit / Paper / BungeeCord Component APIs and standard Java 11+ `HttpClient`.
-- **Lifelong Compatibility**: Never breaks across Minecraft minor updates (1.16, 1.17, 1.18, 1.19, 1.20, 1.21.x+).
-- Fully non-blocking and safe on multi-threaded **Folia** servers.
+- **/link**: Generates a one-time verification link for players to bind their Minecraft UUID and username to their Uptify account. If a player is already logged into Uptify in their browser, the link completes instantly.
+- **/suggest `<text>`** (alias: `/feedback`): Allows players to submit suggestions directly from the game to your Uptify feedback board. Only linked players can submit suggestions to prevent spam.
+- **/status**: Shows live ping/latency of your server nodes and proxies, plus any active maintenance or incident alerts.
+- **/uptify test**: Built-in diagnostic command for server administrators to test API latency and verify project configuration.
+- **PlaceholderAPI Support**: Optional placeholders for scoreboards and tablists (`%uptify_status%`, `%uptify_status_colored%`, `%uptify_version%`). Cached asynchronously with zero impact on TPS.
+- **Zero NMS**: Built entirely on standard Bukkit, Paper, and BungeeCord component APIs. Compatible with Minecraft 1.16 through 1.21.4+ without breaking on game updates.
+- **Folia Compatible**: Uses asynchronous standard Java HTTP client for all network calls. Safe on Folia multi-threaded region servers.
 
 ---
 
-## ⚙️ Quick Installation
+## Setup & Installation
 
-1. Drop `UptifyBridge.jar` into your server's `plugins/` directory.
-2. Start or restart your server.
-3. Open `plugins/UptifyBridge/config.yml` and add your project UUIDs from your Uptify dashboard:
+1. Download `UptifyBridge.jar` and place it into your server's `plugins/` directory.
+2. Start or reload your server to generate `plugins/UptifyBridge/config.yml`.
+3. Open `plugins/UptifyBridge/config.yml` and paste your project IDs from your Uptify dashboard:
    ```yaml
-   # Status Project (for /status command)
+   api-base-url: "https://uptify.site/api"
+   
+   # Status Project ID (used by /status)
    status-project-id: "YOUR_STATUS_PROJECT_ID"
-
-   # Feedback Project (for /suggest and /feedback commands)
+   
+   # Feedback Project ID (used by /suggest)
    feedback-project-id: "YOUR_FEEDBACK_PROJECT_ID"
    ```
-4. Run `/uptify reload` or test your setup with `/uptify test`!
+4. Run `/uptify reload` to apply your configuration.
+5. (Optional) Run `/uptify test` to verify your server can reach the Uptify API.
 
 ---
 
-## 🎮 Commands & Permissions
+## Commands & Permissions
 
 | Command | Aliases | Description | Permission | Default |
 | :--- | :--- | :--- | :--- | :--- |
-| `/link` | `/uptifylink` | Generates a clickable link to verify your Uptify account | `uptify.use` | Everyone |
-| `/suggest <idea>` | `/feedback`, `/idea` | Submits feedback to your server's Uptify board | `uptify.use` | Everyone |
-| `/status` | `/uptifystatus` | Displays live node latency and incident alerts | `uptify.use` | Everyone |
-| `/uptify test` | — | Tests cloud API connection and measures latency ping | `uptify.admin` | OP |
+| `/link` | `/uptifylink` | Generates a link to verify your Uptify account | `uptify.use` | True |
+| `/suggest <idea>` | `/feedback` | Submits feedback to your Uptify board | `uptify.use` | True |
+| `/status` | `/uptifystatus` | Shows live node ping and active incidents | `uptify.use` | True |
+| `/uptify test` | — | Tests API connection and reports latency | `uptify.admin` | OP |
 | `/uptify reload` | — | Reloads config.yml | `uptify.admin` | OP |
-| `/uptify help` | — | Shows help guide | `uptify.admin` | OP |
-| `/uptify version`| — | Displays version and engine info | `uptify.admin` | OP |
+| `/uptify help` | — | Displays plugin command reference | `uptify.admin` | OP |
+| `/uptify version`| — | Displays plugin and server runtime info | `uptify.admin` | OP |
 
 ---
 
-## 🌐 Links
-- **Platform**: [https://uptify.site](https://uptify.site)
-- **Source Code**: [https://github.com/ShaikhZaid404/UptifyBridge](https://github.com/ShaikhZaid404/UptifyBridge)
-- **Issues & Support**: [https://github.com/ShaikhZaid404/UptifyBridge/issues](https://github.com/ShaikhZaid404/UptifyBridge/issues)
+## Requirements
+
+- **Server Software**: Paper, Purpur, Spigot, or Folia
+- **Minecraft Version**: 1.16.5 to 1.21.4+
+- **Java**: Java 17 or Java 21+
+- **Dependencies**: None. (PlaceholderAPI is optional)
+
+---
+
+## Source & Support
+
+- **Website**: https://uptify.site
+- **Source Code**: https://github.com/ShaikhZaid404/UptifyBridge
+- **Issue Tracker**: https://github.com/ShaikhZaid404/UptifyBridge/issues
+- **License**: MIT
