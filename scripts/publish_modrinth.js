@@ -52,14 +52,38 @@ async function main() {
   // Check if project already exists
   const slug = "uptifybridge";
   const checkProj = await fetch(`${API_BASE}/project/${slug}`, {
-    headers: { "User-Agent": USER_AGENT }
+    headers: {
+      "Authorization": MODRINTH_TOKEN,
+      "User-Agent": USER_AGENT
+    }
   });
 
   let projectId = slug;
   if (checkProj.ok) {
     const existing = await checkProj.json();
     projectId = existing.id;
-    console.log(`ℹ Project already exists on Modrinth (ID: ${projectId}). Proceeding to version upload.`);
+    console.log(`ℹ Project already exists on Modrinth (ID: ${projectId}). Syncing metadata...`);
+
+    // Ensure all metadata fields are up to date
+    const patchData = {
+      categories: ["utility", "management"],
+      client_side: "unsupported",
+      server_side: "required",
+      issues_url: "https://github.com/ShaikhZaid404/UptifyBridge/issues",
+      source_url: "https://github.com/ShaikhZaid404/UptifyBridge",
+      wiki_url: "https://uptify.site/docs",
+      license_id: "MIT",
+      license_url: "https://github.com/ShaikhZaid404/UptifyBridge/blob/main/LICENSE"
+    };
+    await fetch(`${API_BASE}/project/${projectId}`, {
+      method: "PATCH",
+      headers: {
+        "Authorization": MODRINTH_TOKEN,
+        "User-Agent": USER_AGENT,
+        "Content-Type": "application/json"
+      },
+      body: JSON.stringify(patchData)
+    });
   } else {
     console.log(`📦 Creating new project '${slug}' on Modrinth...`);
 
@@ -74,7 +98,8 @@ async function main() {
       issues_url: "https://github.com/ShaikhZaid404/UptifyBridge/issues",
       source_url: "https://github.com/ShaikhZaid404/UptifyBridge",
       wiki_url: "https://uptify.site/docs",
-      license_id: "mit",
+      license_id: "MIT",
+      license_url: "https://github.com/ShaikhZaid404/UptifyBridge/blob/main/LICENSE",
       project_type: "mod", // Modrinth classifies server plugins under "mod" with server loaders
       loaders: LOADERS,
       game_versions: GAME_VERSIONS,
@@ -112,18 +137,103 @@ async function main() {
     console.log(`🎉 Project successfully created on Modrinth! ID: ${projectId}`);
   }
 
-  // 2. Upload Version v1.0.0
-  console.log(`📤 Uploading version v1.0.0...`);
+  // 2. Upload Gallery Images (if not already uploaded)
+  try {
+    const projDetailRes = await fetch(`${API_BASE}/project/${projectId}`, {
+      headers: { "User-Agent": USER_AGENT }
+    });
+    const projDetail = projDetailRes.ok ? await projDetailRes.json() : null;
+    const existingGalleryCount = (projDetail && projDetail.gallery) ? projDetail.gallery.length : 0;
 
-  // Download compiled release jar from GitHub
-  const jarUrl = "https://github.com/ShaikhZaid404/UptifyBridge/releases/download/v1.0.0/UptifyBridge-1.0.0.jar";
-  console.log(`⬇ Fetching latest JAR from: ${jarUrl}`);
-  const jarRes = await fetch(jarUrl);
-  if (!jarRes.ok) {
-    throw new Error(`Failed to download JAR from GitHub release: ${jarRes.statusText}`);
+    if (existingGalleryCount === 0) {
+      console.log(`🖼 Uploading gallery images...`);
+      const galleryImages = [
+        {
+          filePath: path.join(__dirname, "../assets/uptifybridge_radar_logo.jpg"),
+          ext: "jpg",
+          featured: true,
+          title: "UptifyBridge Status Radar",
+          description: "Live node monitoring and in-game status integration",
+          ordering: 0
+        },
+        {
+          filePath: path.join(__dirname, "../assets/pixel_logo.jpg"),
+          ext: "jpg",
+          featured: false,
+          title: "Uptify Pixel Art Banner",
+          description: "Official Minecraft Pixel Art branding for Uptify",
+          ordering: 1
+        }
+      ];
+
+      for (const img of galleryImages) {
+        if (fs.existsSync(img.filePath)) {
+          const imgBuffer = fs.readFileSync(img.filePath);
+          const params = new URLSearchParams({
+            ext: img.ext,
+            featured: String(img.featured),
+            title: img.title,
+            description: img.description,
+            ordering: String(img.ordering)
+          });
+          const galRes = await fetch(`${API_BASE}/project/${projectId}/gallery?${params.toString()}`, {
+            method: "POST",
+            headers: {
+              "Authorization": MODRINTH_TOKEN,
+              "User-Agent": USER_AGENT,
+              "Content-Type": "image/jpeg"
+            },
+            body: imgBuffer
+          });
+          if (galRes.ok || galRes.status === 204) {
+            console.log(`✔ Gallery image added: "${img.title}"`);
+          } else {
+            console.warn(`⚠ Could not upload gallery image "${img.title}" (${galRes.status}):`, await galRes.text());
+          }
+        }
+      }
+    } else {
+      console.log(`ℹ Project already has ${existingGalleryCount} gallery image(s). Skipping gallery upload.`);
+    }
+  } catch (err) {
+    console.warn(`⚠ Non-fatal gallery check error:`, err.message);
   }
-  const jarArrayBuffer = await jarRes.arrayBuffer();
-  const jarBlob = new Blob([jarArrayBuffer], { type: "application/java-archive" });
+
+  // 3. Upload Version v1.0.0
+  console.log(`📤 Checking and uploading version v1.0.0...`);
+
+  // Check if version 1.0.0 already exists
+  const versionsRes = await fetch(`${API_BASE}/project/${projectId}/version`, {
+    headers: { "User-Agent": USER_AGENT }
+  });
+  if (versionsRes.ok) {
+    const existingVersions = await versionsRes.json();
+    const v1 = existingVersions.find(v => v.version_number === "1.0.0");
+    if (v1) {
+      console.log(`✔ Version 1.0.0 is already published on Modrinth (ID: ${v1.id})!`);
+      console.log(`🔗 Project URL: https://modrinth.com/plugin/${slug}`);
+      console.log(`🔗 Version URL: https://modrinth.com/plugin/${slug}/version/${v1.id}`);
+      return;
+    }
+  }
+
+  // Read compiled release jar
+  const localJarPath = path.join(__dirname, "../UptifyBridge-1.0.0.jar");
+  let jarBlob;
+  if (fs.existsSync(localJarPath)) {
+    console.log(`📁 Using local compiled JAR: ${localJarPath}`);
+    const jarBuffer = fs.readFileSync(localJarPath);
+    jarBlob = new Blob([jarBuffer], { type: "application/java-archive" });
+  } else {
+    const jarUrl = "https://github.com/ShaikhZaid404/UptifyBridge/releases/download/v1.0.0/UptifyBridge-1.0.0.jar";
+    console.log(`⬇ Fetching JAR from GitHub release: ${jarUrl}`);
+    const jarRes = await fetch(jarUrl);
+    if (!jarRes.ok) {
+      throw new Error(`Failed to download JAR from GitHub release: ${jarRes.statusText}`);
+    }
+    const jarArrayBuffer = await jarRes.arrayBuffer();
+    jarBlob = new Blob([jarArrayBuffer], { type: "application/java-archive" });
+  }
 
   const versionData = {
     name: "UptifyBridge 1.0.0 - Official Release",
@@ -137,7 +247,8 @@ async function main() {
     status: "listed",
     requested_status: "listed",
     project_id: projectId,
-    file_parts: ["jarFile"]
+    file_parts: ["jarFile"],
+    primary_file: "jarFile"
   };
 
   const versionForm = new FormData();
@@ -161,6 +272,26 @@ async function main() {
 
   const ver = await uploadRes.json();
   console.log(`✅ VERSION v1.0.0 PUBLISHED SUCCESSFULLY!`);
+  console.log(`🔗 Version ID: ${ver.id}`);
+  console.log(`🔗 Version URL: https://modrinth.com/plugin/${slug}/version/${ver.id}`);
+
+  // 4. Submit project for review if currently in draft
+  console.log(`📋 Submitting project for Modrinth review...`);
+  const submitRes = await fetch(`${API_BASE}/project/${projectId}`, {
+    method: "PATCH",
+    headers: {
+      "Authorization": MODRINTH_TOKEN,
+      "User-Agent": USER_AGENT,
+      "Content-Type": "application/json"
+    },
+    body: JSON.stringify({
+      requested_status: "approved"
+    })
+  });
+  if (submitRes.ok || submitRes.status === 204) {
+    console.log(`✔ Project submitted for Modrinth review (requested_status: approved)!`);
+  }
+  console.log(`🔗 Project URL: https://modrinth.com/plugin/${slug}`);
   console.log(`🔗 Project URL: https://modrinth.com/plugin/${slug}`);
   console.log(`🔗 Version URL: https://modrinth.com/plugin/${slug}/version/${ver.id}`);
 }
