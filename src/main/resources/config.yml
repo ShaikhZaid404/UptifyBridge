@@ -3,8 +3,8 @@
 #              Official Minecraft Integration for Uptify.site
 # ==============================================================================
 
-# Uptify API endpoint (Do not change unless using a custom domain or proxy)
-api-base-url: "https://uptify.site/api"
+# Uptify API endpoint (Official developer endpoint)
+api-base-url: "https://api.uptify.site"
 
 # Server identification name (Sent to Uptify when creating link sessions)
 server-name: "My Minecraft Network"

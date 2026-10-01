@@ -29,7 +29,7 @@ public class ApiClient {
     }
 
     private String getBaseUrl() {
-        String url = plugin.getConfig().getString("api-base-url", "https://uptify.site/api");
+        String url = plugin.getConfig().getString("api-base-url", "https://api.uptify.site");
         if (url.endsWith("/")) {
             url = url.substring(0, url.length() - 1);
         }

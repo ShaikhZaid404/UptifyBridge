@@ -20,7 +20,7 @@ UptifyBridge is the official Paper / Spigot / Folia integration plugin for [Upti
 2. Start or reload your server to generate `plugins/UptifyBridge/config.yml`.
 3. Open `plugins/UptifyBridge/config.yml` and paste your project IDs from your Uptify dashboard:
    ```yaml
-   api-base-url: "https://uptify.site/api"
+   api-base-url: "https://api.uptify.site"
    
    # Status Project ID (used by /status)
    status-project-id: "YOUR_STATUS_PROJECT_ID"
